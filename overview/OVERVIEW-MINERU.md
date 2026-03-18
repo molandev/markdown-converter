@@ -1,5 +1,10 @@
 # MinerU PDF Converter Service - Overview
 
+## 📦 Source Code
+
+- **GitHub**: https://github.com/molandev/markdown-converter
+- **Gitee**: https://gitee.com/molandev/markdown-converter
+
 ## ⚠️ Important Notice
 
 > **This image runs in CPU-only mode with pipeline backend.**
