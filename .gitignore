@@ -1,0 +1,224 @@
+##########################
+# Java Backend
+##########################
+# Compiled files
+*.class
+*.MF
+target/
+build/
+out/
+bin/
+
+# Package Files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Log files
+*.log
+*.log.gz
+*.log.20*
+logs/
+
+# IDE - IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+.idea_modules/
+
+# IDE - Eclipse
+.classpath
+.project
+.settings/
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.loadpath
+.recommenders
+
+# IDE - VSCode
+.vscode/
+*.code-workspace
+
+# Gradle
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# Maven
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# JRebel
+*rebel.xml
+.rebel.xml.bak
+
+# Spring Boot
+spring-boot-devtools.properties
+
+# JVM Crash Logs
+hs_err_pid*
+replay_pid*
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+##########################
+# Vue Frontend
+##########################
+# Dependencies
+cloud-frontend/node_modules/
+cloud-frontend/jspm_packages/
+
+# Production build
+cloud-frontend/dist/
+cloud-frontend/dist-ssr/
+frontend/*.local
+
+# Editor directories and files
+cloud-frontend/.vscode/*
+cloud-frontend/.idea
+cloud-frontend/.DS_Store
+frontend/*.suo
+frontend/*.ntvs*
+frontend/*.njsproj
+frontend/*.sln
+frontend/*.sw?
+
+# Environment variables
+cloud-frontend/.env.local
+cloud-frontend/.env.*.local
+cloud-frontend/.env.development.local
+cloud-frontend/.env.test.local
+cloud-frontend/.env.production.local
+
+# Logs
+cloud-frontend/npm-debug.log*
+cloud-frontend/yarn-debug.log*
+cloud-frontend/yarn-error.log*
+cloud-frontend/pnpm-debug.log*
+cloud-frontend/lerna-debug.log*
+
+# Cache
+cloud-frontend/.cache/
+cloud-frontend/.temp/
+cloud-frontend/.eslintcache
+
+# Test coverage
+cloud-frontend/coverage/
+cloud-frontend/.nyc_output/
+
+##########################
+# VitePress Documentation
+##########################
+# Dependencies
+docs/node_modules/
+
+# Cache and build
+docs/.vitepress/cache
+docs/.vitepress/dist
+docs/.temp/
+
+# Logs
+docs/npm-debug.log*
+docs/yarn-debug.log*
+docs/yarn-error.log*
+docs/pnpm-debug.log*
+
+##########################
+# OS Generated Files
+##########################
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.directory
+.Trash-*
+.nfs*
+
+##########################
+# General
+##########################
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Lock files (optional - uncomment if you want to ignore them)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml

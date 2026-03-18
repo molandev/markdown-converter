@@ -1,0 +1,53 @@
+# 多阶段构建 - 第一阶段：构建原生可执行文件
+FROM ghcr.io/graalvm/native-image-community:25 AS builder
+
+WORKDIR /workspace/app
+
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+RUN chmod +x ./mvnw
+RUN ./mvnw dependency:go-offline
+
+COPY src src
+#RUN ./mvnw package native:build -Pnative -DskipTests
+RUN ./mvnw native:compile -Pnative -DskipTests
+
+FROM python:3.10-slim
+
+# 接收构建参数
+ENV CONVERTER_TOOL_TYPE=mineru
+
+# 第一步：补全软件源（启用 non-free/contrib 组件）
+RUN echo "deb http://deb.debian.org/debian bookworm main contrib non-free" > /etc/apt/sources.list && \
+    echo "deb http://deb.debian.org/debian bookworm-updates main contrib non-free" >> /etc/apt/sources.list && \
+    echo "deb http://security.debian.org/debian-security bookworm-security main contrib non-free" >> /etc/apt/sources.list
+
+# 第二步：安装依赖（替换 libgl1-mesa-glx 为兼容包）
+RUN apt update && apt install -y --no-install-recommends \
+    libgl1 \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender1 \
+    && apt clean && rm -rf /var/lib/apt/lists/*
+
+
+RUN #pip install --no-cache-dir "mineru[core]" -i https://mirrors.aliyun.com/pypi/simple
+RUN pip install --no-cache-dir "mineru[core]"
+
+RUN mineru-models-download -m pipeline -s modelscope
+
+WORKDIR /app
+
+# 安装运行所需依赖
+#RUN apk add --no-cache libstdc++ gcompat zlib
+
+# 从构建器阶段复制原生可执行文件
+COPY --from=builder /workspace/app/target/document-converter /app/document-converter
+
+EXPOSE 10996
+
+ENTRYPOINT ["/app/document-converter"]
+
+# mineru -p ./tttt.pdf -o tttta -b pipeline --source local

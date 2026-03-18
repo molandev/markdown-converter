@@ -1,0 +1,35 @@
+# 多阶段构建 - 第一阶段：构建原生可执行文件
+FROM ghcr.io/graalvm/native-image-community:25 AS builder
+
+WORKDIR /workspace/app
+
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+RUN chmod +x ./mvnw
+RUN ./mvnw dependency:go-offline
+
+COPY src src
+#RUN ./mvnw package native:build -Pnative -DskipTests
+RUN ./mvnw native:compile -Pnative -DskipTests
+
+FROM python:3.10-slim
+
+RUN pip install 'markitdown[pdf, docx, pptx, xlsx, xls]'
+
+WORKDIR /app
+
+# 接收构建参数
+ENV CONVERTER_TOOL_TYPE=markitdown \
+    SERVER_PORT=10996
+
+# 从构建器阶段复制原生可执行文件
+COPY --from=builder /workspace/app/target/document-converter /app/document-converter
+
+EXPOSE 10996
+
+ENTRYPOINT ["/app/document-converter"]
+
+# markitdown --keep-data-uris tttt.docx -o tttt.md
+
+

@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: document-converter-api
+  # 禁用启动 banner
+  main:
+    banner-mode: off
+  servlet:
+    multipart:
+      max-file-size: ${CONVERTER_FILE_SIZE:100MB}
+      max-request-size: 100MB
+      enabled: true
+server:
+  port: ${SERVER_PORT:10996}
+  tomcat:
+    max-swallow-size: -1
+    connection-timeout: 600000
+
+# 转换器配置
+converter:
+  tool:
+    # 工具类型：all(全部), libreoffice, mineru, markitdown
+    # 可通过环境变量 CONVERTER_TOOL_TYPE 或构建参数覆盖
+    type: ${CONVERTER_TOOL_TYPE:all}
+  
+  # 并发控制配置
+  concurrency:
+    # 最大并发处理数量
+    # 可通过环境变量 CONVERTER_MAX_CONCURRENT 覆盖
+    max-concurrent: ${CONVERTER_MAX_CONCURRENT:10}
+    # 等待超时时间（秒）
+    acquire-timeout: ${CONVERTER_ACQUIRE_TIMEOUT:30}
+  
+  # 临时文件清理配置
+  cleanup:
+    # 临时文件保留时间（分钟）
+    # 可通过环境变量 CONVERTER_RETENTION_MINUTES 覆盖
+    retention-minutes: ${CONVERTER_RETENTION_MINUTES:10}
+    # 清理任务执行间隔（分钟）
+    schedule-minutes: ${CONVERTER_SCHEDULE_MINUTES:5}
+    # 临时文件基础目录
+    # 可通过环境变量 CONVERTER_TEMP_DIR 覆盖
+    # 默认为 /app/temp，方便 Docker 映射
+    temp-dir: ${CONVERTER_TEMP_DIR:/app/temp}
+logging:
+  # 日志级别配置
+  level:
+    root: INFO
+    # 框架核心包的日志级别
+    com.molandev: DEBUG
+  # 日志输出格式配置
+  pattern:
+    # 控制台日志格式：包含时间、日志级别高亮、用户上下文、简短类名和消息内容
+    console: "[%d{yyyy-MM-dd HH:mm:ss}][%highlight(%-5level)]%X{contextUser}[%cyan(%logger{0})]%msg%n"

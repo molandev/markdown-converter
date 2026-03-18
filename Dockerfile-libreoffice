@@ -1,0 +1,72 @@
+# 多阶段构建 - 第一阶段：构建原生可执行文件
+FROM ghcr.io/graalvm/native-image-community:25 AS builder
+
+WORKDIR /workspace/app
+
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+RUN chmod +x ./mvnw
+RUN ./mvnw dependency:go-offline
+
+COPY src src
+#RUN ./mvnw package native:build -Pnative -DskipTests
+RUN ./mvnw native:compile -Pnative -DskipTests
+
+# 阶段1：构建极简 Debian + LibreOffice 转换环境
+FROM ubuntu:22.04
+RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+
+
+# 接收构建参数
+ENV CONVERTER_TOOL_TYPE=libreoffice
+
+# 配置国内镜像源（阿里云）
+#RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list.d/debian.sources \
+#    && sed -i 's/security.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list.d/debian.sources
+
+# LibreOffice 核心组件（保留 Writer + 公式引擎 + 过滤器）
+RUN apt update && apt install -y --no-install-recommends \
+    libreoffice-writer \
+    libreoffice-common \
+    libreoffice-math \
+    fontconfig \
+    fonts-wqy-microhei \
+    fonts-dejavu-core \
+    fonts-liberation \
+    libstdc++6 \
+    zlib1g \
+    libxrender1 \
+    libgl1-mesa-glx \
+    && apt clean && rm -rf /var/lib/apt/lists/* \
+    && rm -rf \
+    /usr/lib/libreoffice/share/help \
+    /usr/lib/libreoffice/share/config/images \
+    /usr/lib/libreoffice/program/python-core \
+    /usr/lib/libreoffice/share/gallery \
+    /usr/lib/libreoffice/share/templates \
+    /usr/lib/libreoffice/share/doc \
+    /usr/lib/libreoffice/share/example \
+    /usr/lib/libreoffice/share/lang/* \
+    !/usr/lib/libreoffice/share/lang/en \
+    !/usr/lib/libreoffice/share/lang/zh*  \
+    /usr/lib/libreoffice/program/soffice.bin~ \
+    && fc-cache -fv;
+
+WORKDIR /app
+
+# 构建参数：指定工具类型
+ENV CONVERTER_TOOL_TYPE=libreoffice \
+    SERVER_PORT=10996
+
+# 安装运行所需依赖
+#RUN apk add --no-cache libstdc++ gcompat zlib
+
+# 从构建器阶段复制原生可执行文件
+COPY --from=builder /workspace/app/target/document-converter /app/document-converter
+
+EXPOSE 10996
+
+ENTRYPOINT ["/app/document-converter"]
+
+#libreoffice --headless --convert-to docx --outdir /aaa /aaa/test.doc
